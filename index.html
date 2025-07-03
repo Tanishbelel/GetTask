@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Student Task Management System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Student Task Management System</h1>
+        </div>
+
+        <div class="student-info">
+            <h3>👨‍🎓 Student Dashboard</h3>
+            <p><strong>Name:</strong> <span id="studentName">John Doe</span></p>
+            <p><strong>Student ID:</strong> <span id="studentId">STU2024001</span></p>
+            <p><strong>Course:</strong> <span id="courseName">Web Development Bootcamp</span></p>
+        </div>
+
+        <div class="progress-overview">
+            <div class="progress-card">
+                <h3>Total Weeks</h3>
+                <div class="number" id="totalWeeks">4</div>
+            </div>
+            <div class="progress-card">
+                <h3>Completed Weeks</h3>
+                <div class="number" id="completedWeeks">0</div>
+            </div>
+            <div class="progress-card">
+                <h3>Current Week</h3>
+                <div class="number" id="currentWeek">1</div>
+            </div>
+            <div class="progress-card">
+                <h3>Overall Progress</h3>
+                <div class="number" id="overallProgress">0%</div>
+            </div>
+        </div>
+
+        <div class="weeks-container" id="weeksContainer">
+            <!-- Weeks will be dynamically generated -->
+        </div>
+
+        <div class="admin-panel">
+            <h3 class="admin-title">🔧 Admin Panel - Pending Verifications</h3>
+            <div class="pending-tasks" id="pendingTasks">
+                <p style="color: #666; font-style: italic;">No pending submissions for verification.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Task management system with Google Forms integration
+        class TaskManagementSystem {
+            constructor() {
+                this.totalWeeks = 4;
+                this.currentWeek = 1;
+                this.completedWeeks = 0;
+                this.weekData = this.initializeWeekData();
+                this.submissionStatus = this.loadSubmissionStatus();
+                this.init();
+            }
+
+            initializeWeekData() {
+                return {
+                    1: {
+                        title: "Week 1: HTML Fundamentals",
+                        forms: [
+                            {
+                                id: "form1_1",
+                                title: "HTML Basics Assignment",
+                                url: "https://docs.google.com/forms/d/e/YOUR_FORM_ID_1/viewform",
+                                submitted: false
+                            },
+                            {
+  id: "form1_2", 
+  title: "HTML Structure Project",
+  url: "https://docs.google.com/forms/d/e/1FAIpQLSep4shStZW8nnecpojqEQ0Oxef7q5wY5RL2DKR9PxEBOkhTxw/viewform",
+  submitted: false
+}
+
+                        ],
+                        unlocked: true
+                    },
+                    2: {
+                        title: "Week 2: CSS Styling",
+                        forms: [
+                            {
+                                id: "form2_1",
+                                title: "CSS Selectors Assignment",
+                                url: "https://docs.google.com/forms/d/e/YOUR_FORM_ID_3/viewform",
+                                submitted: false
+                            },
+                            {
+                                id: "form2_2",
+                                title: "CSS Layout Project", 
+                                url: "https://docs.google.com/forms/d/e/YOUR_FORM_ID_4/viewform",
+                                submitted: false
+                            }
+                        ],
+                        unlocked: false
+                    },
+                    3: {
+                        title: "Week 3: JavaScript Basics",
+                        forms: [
+                            {
+                                id: "form3_1",
+                                title: "JavaScript Variables & Functions",
+                                url: "https://docs.google.com/forms/d/e/YOUR_FORM_ID_5/viewform",
+                                submitted: false
+                            },
+                            {
+                                id: "form3_2",
+                                title: "JavaScript DOM Manipulation",
+                                url: "https://docs.google.com/forms/d/e/YOUR_FORM_ID_6/viewform",
+                                submitted: false
+                            }
+                        ],
+                        unlocked: false
+                    },
+                    4: {
+                        title: "Week 4: Final Project",
+                        forms: [
+                            {
+                                id: "form4_1",
+                                title: "Project Planning Document",
+                                url: "https://docs.google.com/forms/d/e/YOUR_FORM_ID_7/viewform",
+                                submitted: false
+                            },
+                            {
+                                id: "form4_2",
+                                title: "Final Project Submission",
+                                url: "https://docs.google.com/forms/d/e/YOUR_FORM_ID_8/viewform",
+                                submitted: false
+                            }
+                        ],
+                        unlocked: false
+                    }
+                };
+            }
+
+            loadSubmissionStatus() {
+                // In a real application, this would load from a database or API
+                // For demo purposes, using in-memory storage
+                const saved = JSON.parse(localStorage.getItem('submissionStatus') || '{}');
+                return saved;
+            }
+
+            saveSubmissionStatus() {
+                localStorage.setItem('submissionStatus', JSON.stringify(this.submissionStatus));
+            }
+
+            init() {
+                this.loadSubmissions();
+                this.renderWeeks();
+                this.updateProgress();
+                this.updatePendingTasks();
+            }
+
+            loadSubmissions() {
+                // Apply saved submission status to week data
+                for (let week in this.submissionStatus) {
+                    if (this.weekData[week]) {
+                        this.weekData[week].forms.forEach((form, index) => {
+                            if (this.submissionStatus[week] && this.submissionStatus[week][form.id]) {
+                                form.submitted = true;
+                            }
+                        });
+                    }
+                }
+                this.checkUnlockConditions();
+            }
+
+            checkUnlockConditions() {
+                let completedWeeks = 0;
+                
+                for (let weekNum = 1; weekNum <= this.totalWeeks; weekNum++) {
+                    const week = this.weekData[weekNum];
+                    const allFormsSubmitted = week.forms.every(form => form.submitted);
+                    
+                    if (allFormsSubmitted && weekNum < this.totalWeeks) {
+                        // Unlock next week
+                        this.weekData[weekNum + 1].unlocked = true;
+                        completedWeeks = weekNum;
+                    }
+                }
+
+                this.completedWeeks = completedWeeks;
+                this.currentWeek = Math.min(completedWeeks + 1, this.totalWeeks);
+            }
+
+            renderWeeks() {
+                const container = document.getElementById('weeksContainer');
+                container.innerHTML = '';
+
+                for (let weekNum = 1; weekNum <= this.totalWeeks; weekNum++) {
+                    const week = this.weekData[weekNum];
+                    const weekElement = this.createWeekElement(weekNum, week);
+                    container.appendChild(weekElement);
+                }
+            }
+
+            createWeekElement(weekNum, week) {
+                const weekDiv = document.createElement('div');
+                weekDiv.className = `week ${week.unlocked ? 'unlocked' : 'locked'}`;
+                weekDiv.style.cssText = `
+                    border: 2px solid ${week.unlocked ? '#4CAF50' : '#ccc'};
+                    margin: 20px 0;
+                    padding: 20px;
+                    border-radius: 8px;
+                    background-color: ${week.unlocked ? '#f8fff8' : '#f5f5f5'};
+                    opacity: ${week.unlocked ? '1' : '0.6'};
+                `;
+
+                const allFormsSubmitted = week.forms.every(form => form.submitted);
+                const statusIcon = allFormsSubmitted ? '✅' : (week.unlocked ? '🔓' : '🔒');
+
+                weekDiv.innerHTML = `
+                    <h3 style="color: ${week.unlocked ? '#2E7D32' : '#666'};">
+                        ${statusIcon} ${week.title}
+                        ${!week.unlocked ? ' (Locked)' : ''}
+                        ${allFormsSubmitted ? ' (Completed)' : ''}
+                    </h3>
+                    <div class="forms-container">
+                        ${week.forms.map((form, index) => this.createFormElement(weekNum, form, week.unlocked)).join('')}
+                    </div>
+                `;
+
+                return weekDiv;
+            }
+
+            createFormElement(weekNum, form, weekUnlocked) {
+                const formDiv = document.createElement('div');
+                formDiv.style.cssText = `
+                    margin: 15px 0;
+                    padding: 15px;
+                    border: 1px solid #ddd;
+                    border-radius: 5px;
+                    background-color: ${form.submitted ? '#e8f5e8' : '#fff'};
+                `;
+
+                if (weekUnlocked && !form.submitted) {
+                    formDiv.innerHTML = `
+                        <h4>${form.submitted ? '✅' : '📝'} ${form.title}</h4>
+                        <iframe src="${form.url}?embedded=true" 
+                                width="100%" 
+                                height="400" 
+                                frameborder="0" 
+                                marginheight="0" 
+                                marginwidth="0">
+                            Loading form...
+                        </iframe>
+                        <button onclick="taskSystem.markAsSubmitted('${weekNum}', '${form.id}')" 
+                                style="margin-top: 10px; padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            Mark as Submitted
+                        </button>
+                    `;
+                } else if (form.submitted) {
+                    formDiv.innerHTML = `
+                        <h4>✅ ${form.title} (Submitted)</h4>
+                        <p style="color: #4CAF50; font-style: italic;">This assignment has been submitted successfully.</p>
+                    `;
+                } else {
+                    formDiv.innerHTML = `
+                        <h4>🔒 ${form.title} (Locked)</h4>
+                        <p style="color: #666; font-style: italic;">Complete previous week's assignments to unlock this task.</p>
+                    `;
+                }
+
+                return formDiv.outerHTML;
+            }
+
+            markAsSubmitted(weekNum, formId) {
+                // Initialize week object if it doesn't exist
+                if (!this.submissionStatus[weekNum]) {
+                    this.submissionStatus[weekNum] = {};
+                }
+
+                // Mark form as submitted
+                this.submissionStatus[weekNum][formId] = true;
+                
+                // Update the week data
+                const week = this.weekData[weekNum];
+                const form = week.forms.find(f => f.id === formId);
+                if (form) {
+                    form.submitted = true;
+                }
+
+                // Save to storage
+                this.saveSubmissionStatus();
+
+                // Check if week is completed and unlock next week
+                this.checkUnlockConditions();
+
+                // Re-render everything
+                this.renderWeeks();
+                this.updateProgress();
+                this.updatePendingTasks();
+
+                // Show success message
+                alert(`${form.title} has been marked as submitted!`);
+            }
+
+            updateProgress() {
+                document.getElementById('totalWeeks').textContent = this.totalWeeks;
+                document.getElementById('completedWeeks').textContent = this.completedWeeks;
+                document.getElementById('currentWeek').textContent = this.currentWeek;
+                
+                const overallProgress = Math.round((this.completedWeeks / this.totalWeeks) * 100);
+                document.getElementById('overallProgress').textContent = overallProgress + '%';
+            }
+
+            updatePendingTasks() {
+                const pendingContainer = document.getElementById('pendingTasks');
+                const pendingTasks = [];
+
+                for (let weekNum = 1; weekNum <= this.totalWeeks; weekNum++) {
+                    const week = this.weekData[weekNum];
+                    if (week.unlocked) {
+                        week.forms.forEach(form => {
+                            if (form.submitted) {
+                                pendingTasks.push({
+                                    week: weekNum,
+                                    form: form.title,
+                                    status: 'Pending Verification'
+                                });
+                            }
+                        });
+                    }
+                }
+
+                if (pendingTasks.length === 0) {
+                    pendingContainer.innerHTML = '<p style="color: #666; font-style: italic;">No pending submissions for verification.</p>';
+                } else {
+                    pendingContainer.innerHTML = pendingTasks.map(task => `
+                        <div style="margin: 10px 0; padding: 10px; background-color: #fff3cd; border-radius: 4px;">
+                            <strong>Week ${task.week}:</strong> ${task.form} - 
+                            <span style="color: #856404;">${task.status}</span>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            resetProgress() {
+                if (confirm('Are you sure you want to reset all progress? This action cannot be undone.')) {
+                    localStorage.removeItem('submissionStatus');
+                    location.reload();
+                }
+            }
+        }
+
+        // Initialize the system when page loads
+        let taskSystem;
+        window.addEventListener('DOMContentLoaded', function() {
+            taskSystem = new TaskManagementSystem();
+            
+            // Add reset button for testing
+            const container = document.querySelector('.container');
+            const resetButton = document.createElement('button');
+            resetButton.textContent = 'Reset Progress (For Testing)';
+            resetButton.style.cssText = 'margin: 20px 0; padding: 10px 20px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer;';
+            resetButton.onclick = () => taskSystem.resetProgress();
+            container.appendChild(resetButton);
+        });
+    </script>
+</body>
+
+</html>

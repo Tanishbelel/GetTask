@@ -246,7 +246,7 @@
 
         .student-info h3 {
             color: #2d5a3d;
-            margin-bottom: 15px;
+            margin-bottom: 15px;   
         }
 
         .student-info p {
@@ -395,6 +395,8 @@
             color: #155724;
             border: 1px solid #c3e6cb;
         }
+
+      
 
         @keyframes slideIn {
             from {
@@ -589,6 +591,7 @@
             </div>
         </div>
     </div>
+    
 
     <!-- Error/Success Messages -->
     <div id="messageContainer"
@@ -907,8 +910,50 @@
             week.forms.forEach((form, formIndex) => {
                 const isSubmitted = form.submitted;
                 
+                // End of week 1 day 1
+
+                if (weekNum === 1 && formIndex === 0) {
+                    weekHtml += `
+                        <div class="form-container ${isSubmitted ? 'submitted' : ''}">
+                            <h4>${form.title} ${isSubmitted ? '✅' : ''}</h4>
+                            
+
+                            
+                            <!-- Direct Form Access Button -->
+                            <div class="End-of-task" style="margin: 15px 0; height: 400px; width: 100%;
+             text-align: center; background: lightgreen; padding: 20px; border-radius: 10px; border: 1px solid green; align-content: center; color: red; font-size: 30px; font-weight: bold;">
+                                Task DeadLine Reached!
+                                <br/> <br/>
+                                Thank You for applying in this skill training internship.
+                            </div>
+                        </div>
+                    `;
+
+                    }
+
+                // End of week 1 day 2
+
+                else if (weekNum === 1 && formIndex === 1) {
+                    weekHtml += `
+                        <div class="form-container ${isSubmitted ? 'submitted' : ''}">
+                            <h4>${form.title} ${isSubmitted ? '✅' : ''}</h4>
+                            
+
+                            
+                            <!-- Direct Form Access Button -->
+                            <div class="End-of-task" style="margin: 15px 0; height: 400px; width: 100%;
+             text-align: center; background: lightgreen; padding: 20px; border-radius: 10px; border: 1px solid green; align-content: center; color: red; font-size: 30px; font-weight: bold;">
+                                Task DeadLine Reached!
+                                <br/> <br/>
+                                Thank You for applying in this skill training internship.
+                            </div>
+                        </div>
+                    `;
+
+                    }
+
                 // Special handling for Week 2, Form 1 (index 0)
-                if (weekNum === 2 && formIndex === 0) {
+               else if (weekNum === 2 && formIndex === 0) {
                     weekHtml += `
                         <div class="form-container ${isSubmitted ? 'submitted' : ''}">
                             <h4>${form.title} ${isSubmitted ? '✅' : ''}</h4>

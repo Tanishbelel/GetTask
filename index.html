@@ -637,13 +637,13 @@
                         title: "Python and its application",
                         forms: [
                             { id: "form3_1", title: "All about Python", url: "https://docs.google.com/forms/d/e/YOUR_FORM_ID_5/viewform", submitted: false },
-                            { id: "form3_2", title: "ChatBot Using Python", url: "https://docs.google.com/forms/d/e/YOUR_FORM_ID_6/viewform", submitted: false }
+                            { id: "form3_2", title: "ChatBot Using Python", url: "https://forms.gle/V9ZamjYGFaGwN71h6", submitted: false }
                         ]
                     },
                     4: {
                         title: "Week 4: Django and Final Project",
                         forms: [
-                            { id: "form4_1", title: "All about Django", url: "https://docs.google.com/forms/d/e/YOUR_FORM_ID_7/viewform", submitted: false },
+                            { id: "form4_1", title: "All about Django", url: "https://forms.gle/gqzCemPxZPyKz9Q29", submitted: false },
                             { id: "form4_2", title: "Live Project", url: "https://docs.google.com/forms/d/e/YOUR_FORM_ID_8/viewform", submitted: false }
                         ]
                     }
@@ -962,7 +962,48 @@
                             </div>
                         </div>
                     `;
-                } else {
+                } 
+
+               else if (weekNum === 3 && formIndex === 0) {
+                    weekHtml += `
+                        <div class="form-container ${isSubmitted ? 'submitted' : ''}">
+                            <h4>${form.title} ${isSubmitted ? '✅' : ''}</h4>
+                            
+
+                            
+                            <!-- Direct Form Access Button -->
+                            <div class="End-of-task" style="margin: 15px 0; height: 300px; width: 100%;
+             text-align: center; background: #DEFFD0; padding: 20px; border-radius: 10px; border: 1px solid green; align-content: center; color: green; font-size: 30px; font-weight: bold;">
+                                Hurrayyyy!!! There's no task for this lecture.
+                                <br/> <br/>
+                               Just click on Check Form Submission button below and go ahead.
+                            </div>
+                        </div>
+                         ${form.submitted && form.uploadInfo ? `
+                                <div class="uploaded-file-info" style="margin-top: 10px;">
+                                    <p><strong>Uploaded:</strong> ${form.uploadInfo.fileName}</p>
+                                    <p><strong>Stored at:</strong> <a href="${form.uploadInfo.filePath}" target="_blank">${form.uploadInfo.filePath}</a></p>
+                                </div>
+                            ` : ''}
+
+                            <div style="margin-top: 15px;">
+                                <p style="color: #666; font-size: 14px; margin-bottom: 10px;">
+                                    After submitting the form, click the button below to check if it was properly submitted:
+                                </p>
+                                <button class="submit-button"
+                                        onclick="taskSystem.checkFormSubmission(${weekNum}, '${form.id}')"
+                                        ${isSubmitted ? 'disabled' : ''}>
+                                    ${isSubmitted ? 'Form Submitted ✅' : 'Check Form Submission'}
+                                </button>
+                            </div>
+                        </div>
+                    `;
+
+                    }
+       
+                
+
+                else {
                     // Regular form rendering for all other forms
                     weekHtml += `
                         <div class="form-container ${isSubmitted ? 'submitted' : ''}">
@@ -1001,7 +1042,10 @@
                     `;
                 }
             });
-        } else {
+        } 
+        
+
+        else {
             // Week is locked
             weekHtml += `
                 <div class="verification-pending">
